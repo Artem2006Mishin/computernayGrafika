@@ -8,12 +8,6 @@
         private System.ComponentModel.IContainer components = null;
 
         private System.Windows.Forms.PictureBox pictureBoxCanvas;
-        private System.Windows.Forms.Panel panelControls;
-        private System.Windows.Forms.TextBox txtAngle;
-        private System.Windows.Forms.Button btnDraw;
-        private System.Windows.Forms.Button btnRotate;
-        private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.Label lblAngle;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -33,12 +27,14 @@
         private void InitializeComponent()
         {
             pictureBoxCanvas = new PictureBox();
-            panelControls = new Panel();
-            lblAngle = new Label();
-            txtAngle = new TextBox();
-            btnDraw = new Button();
-            btnRotate = new Button();
             btnClear = new Button();
+            BtnRotate = new Button();
+            btnDraw = new Button();
+            txtAngle = new TextBox();
+            lblAngle = new Label();
+            panelControls = new Panel();
+            ScaleButton = new Button();
+            MoveButton = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBoxCanvas).BeginInit();
             panelControls.SuspendLayout();
             SuspendLayout();
@@ -55,40 +51,29 @@
             pictureBoxCanvas.TabStop = false;
             pictureBoxCanvas.Paint += PictureBoxCanvas_Paint;
             // 
-            // panelControls
+            // btnClear
             // 
-            panelControls.BackColor = SystemColors.Control;
-            panelControls.Controls.Add(lblAngle);
-            panelControls.Controls.Add(txtAngle);
-            panelControls.Controls.Add(btnDraw);
-            panelControls.Controls.Add(btnRotate);
-            panelControls.Controls.Add(btnClear);
-            panelControls.Dock = DockStyle.Left;
-            panelControls.Location = new Point(0, 0);
-            panelControls.Name = "panelControls";
-            panelControls.Size = new Size(200, 450);
-            panelControls.TabIndex = 1;
+            btnClear.Location = new Point(15, 384);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(170, 30);
+            btnClear.TabIndex = 4;
+            btnClear.Text = "Очистить";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += BtnClear_Click;
             // 
-            // lblAngle
+            // BtnRotate
             // 
-            lblAngle.AutoSize = true;
-            lblAngle.Location = new Point(12, 12);
-            lblAngle.Name = "lblAngle";
-            lblAngle.Size = new Size(44, 20);
-            lblAngle.TabIndex = 0;
-            lblAngle.Text = "Угол:";
-            // 
-            // txtAngle
-            // 
-            txtAngle.Location = new Point(56, 9);
-            txtAngle.Name = "txtAngle";
-            txtAngle.PlaceholderText = "deg";
-            txtAngle.Size = new Size(60, 27);
-            txtAngle.TabIndex = 1;
+            BtnRotate.Location = new Point(15, 163);
+            BtnRotate.Name = "BtnRotate";
+            BtnRotate.Size = new Size(170, 27);
+            BtnRotate.TabIndex = 3;
+            BtnRotate.Text = "Повернуть ";
+            BtnRotate.UseVisualStyleBackColor = true;
+            BtnRotate.Click += BtnRotate_Click;
             // 
             // btnDraw
             // 
-            btnDraw.Location = new Point(15, 60);
+            btnDraw.Location = new Point(15, 38);
             btnDraw.Name = "btnDraw";
             btnDraw.Size = new Size(170, 30);
             btnDraw.TabIndex = 2;
@@ -96,25 +81,58 @@
             btnDraw.UseVisualStyleBackColor = true;
             btnDraw.Click += BtnDraw_Click;
             // 
-            // btnRotate
+            // txtAngle
             // 
-            btnRotate.Location = new Point(15, 100);
-            btnRotate.Name = "btnRotate";
-            btnRotate.Size = new Size(170, 55);
-            btnRotate.TabIndex = 3;
-            btnRotate.Text = "Повернуть (относительно 0,0)";
-            btnRotate.UseVisualStyleBackColor = true;
-            btnRotate.Click += BtnRotate_Click;
+            txtAngle.Location = new Point(65, 130);
+            txtAngle.Name = "txtAngle";
+            txtAngle.PlaceholderText = "deg";
+            txtAngle.Size = new Size(60, 27);
+            txtAngle.TabIndex = 1;
             // 
-            // btnClear
+            // lblAngle
             // 
-            btnClear.Location = new Point(15, 165);
-            btnClear.Name = "btnClear";
-            btnClear.Size = new Size(170, 30);
-            btnClear.TabIndex = 4;
-            btnClear.Text = "Очистить";
-            btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += BtnClear_Click;
+            lblAngle.AutoSize = true;
+            lblAngle.Location = new Point(15, 133);
+            lblAngle.Name = "lblAngle";
+            lblAngle.Size = new Size(44, 20);
+            lblAngle.TabIndex = 0;
+            lblAngle.Text = "Угол:";
+            // 
+            // panelControls
+            // 
+            panelControls.BackColor = SystemColors.Control;
+            panelControls.Controls.Add(ScaleButton);
+            panelControls.Controls.Add(MoveButton);
+            panelControls.Controls.Add(lblAngle);
+            panelControls.Controls.Add(txtAngle);
+            panelControls.Controls.Add(btnDraw);
+            panelControls.Controls.Add(BtnRotate);
+            panelControls.Controls.Add(btnClear);
+            panelControls.Dock = DockStyle.Left;
+            panelControls.Location = new Point(0, 0);
+            panelControls.Name = "panelControls";
+            panelControls.Size = new Size(200, 450);
+            panelControls.TabIndex = 1;
+            // 
+            // ScaleButton
+            // 
+            ScaleButton.Location = new Point(15, 231);
+            ScaleButton.Name = "ScaleButton";
+            ScaleButton.Size = new Size(170, 29);
+            ScaleButton.TabIndex = 6;
+            ScaleButton.Text = "Масштабировать";
+            ScaleButton.UseVisualStyleBackColor = true;
+            ScaleButton.Click += ScaleButton_Click;
+            // 
+            // MoveButton
+            // 
+            MoveButton.Location = new Point(15, 196);
+            MoveButton.Name = "MoveButton";
+            MoveButton.Size = new Size(170, 29);
+            MoveButton.TabIndex = 5;
+            MoveButton.Text = "Переместить";
+            MoveButton.UseVisualStyleBackColor = true;
+            MoveButton.Click += MoveButton_Click;
             // 
             // DrawingForm
             // 
@@ -131,5 +149,14 @@
         }
 
         #endregion
+
+        private Button btnClear;
+        private Button BtnRotate;
+        private Button btnDraw;
+        private TextBox txtAngle;
+        private Label lblAngle;
+        private Panel panelControls;
+        private Button ScaleButton;
+        private Button MoveButton;
     }
 }
