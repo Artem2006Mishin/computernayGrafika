@@ -182,27 +182,21 @@ namespace computernayGrafika
             double maxAbsX = 1.0;
             double maxAbsY = 1.0;
 
-            if (currentPoints != null)
+            // Use the unrotated original points as reference so rotation doesn't change the scale.
+            var referencePoints = originalPoints ?? currentPoints;
+            if (referencePoints != null)
             {
-                foreach (var p in currentPoints)
-                {
-                    maxAbsX = Math.Max(maxAbsX, Math.Abs(p.X));
-                    maxAbsY = Math.Max(maxAbsY, Math.Abs(p.Y));
-                }
-            }
-            else if (originalPoints != null)
-            {
-                foreach (var p in originalPoints)
+                foreach (var p in referencePoints)
                 {
                     maxAbsX = Math.Max(maxAbsX, Math.Abs(p.X));
                     maxAbsY = Math.Max(maxAbsY, Math.Abs(p.Y));
                 }
             }
 
-            int margin = 10; // пикселей запаса от краЄв
+            int margin = 6; // smaller margin -> slightly larger scale
             double scaleX = (w / 2.0 - margin) / maxAbsX;
             double scaleY = (h / 2.0 - margin) / maxAbsY;
-            scale = Math.Max(0.000001, Math.Min(scaleX, scaleY)); // защитный минимум
+            scale = Math.Max(0.000001, Math.Min(scaleX, scaleY)); // protective minimum and fit
 
             int cx = w / 2;
             int cy = h / 2;
@@ -240,7 +234,7 @@ namespace computernayGrafika
                 using var pen = new Pen(Color.Black, 1);
                 using var f = new Font(this.Font.FontFamily, 9);
                 using var b = new SolidBrush(Color.Black);
-                
+
                 for (int i = 0; i < pts.Length; i++)
                 {
                     var sp = WorldToScreen(pts[i]);
@@ -255,12 +249,19 @@ namespace computernayGrafika
         // –исование тонкой сетки мировых координат вокруг центра
         private void DrawGrid(Graphics g, int cx, int cy)
         {
-            double[] candidates = { 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-            double bestStep = 1;
+            // Candidates include fine steps (0.1, 0.2, 0.5...) so integer world coords land on intersections.
+            double[] candidates = { 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200 };
+            // Prefer denser grid: target pixel step smaller -> more cells visible
+            double minPx = 18, maxPx = 60;
+            double targetPx = (minPx + maxPx) / 2.0;
+
+            double bestStep = candidates[0];
+            double bestScore = double.MaxValue;
             foreach (var s in candidates)
             {
                 double px = s * scale;
-                if (px >= 40 && px <= 140) { bestStep = s; break; }
+                double score = Math.Abs(px - targetPx);
+                if (score < bestScore) { bestScore = score; bestStep = s; }
             }
 
             int w = pictureBoxCanvas.ClientSize.Width;
@@ -268,28 +269,22 @@ namespace computernayGrafika
 
             using (var thin = new Pen(Color.FromArgb(240, 240, 240)))
             {
-                for (double x = 0; ; x += bestStep)
+                // Draw vertical grid lines anchored at origin (cx) so integer world coords hit intersections.
+                int maxKx = (int)Math.Ceiling((w / 2.0) / (bestStep * scale));
+                for (int k = -maxKx; k <= maxKx; k++)
                 {
-                    if (x > (w / 2.0) / scale + bestStep) break;
-                    if (x != 0)
-                    {
-                        int sx = cx + (int)Math.Round(x * scale);
-                        g.DrawLine(thin, sx, 0, sx, h);
-                        sx = cx - (int)Math.Round(x * scale);
-                        g.DrawLine(thin, sx, 0, sx, h);
-                    }
+                    if (k == 0) continue; // main axis drawn separately
+                    int sx = cx + (int)Math.Round(k * bestStep * scale);
+                    g.DrawLine(thin, sx, 0, sx, h);
                 }
 
-                for (double y = 0; ; y += bestStep)
+                // Draw horizontal grid lines anchored at origin (cy).
+                int maxKy = (int)Math.Ceiling((h / 2.0) / (bestStep * scale));
+                for (int k = -maxKy; k <= maxKy; k++)
                 {
-                    if (y > (h / 2.0) / scale + bestStep) break;
-                    if (y != 0)
-                    {
-                        int sy = cy + (int)Math.Round(y * scale);
-                        g.DrawLine(thin, 0, sy, w, sy);
-                        sy = cy - (int)Math.Round(y * scale);
-                        g.DrawLine(thin, 0, sy, w, sy);
-                    }
+                    if (k == 0) continue;
+                    int sy = cy - (int)Math.Round(k * bestStep * scale); // world Y positive -> up
+                    g.DrawLine(thin, 0, sy, w, sy);
                 }
             }
         }
