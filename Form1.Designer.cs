@@ -53,6 +53,7 @@
             pictureBoxCanvas.Size = new Size(600, 450);
             pictureBoxCanvas.TabIndex = 0;
             pictureBoxCanvas.TabStop = false;
+            pictureBoxCanvas.Paint += PictureBoxCanvas_Paint;
             // 
             // panelControls
             // 
@@ -73,7 +74,7 @@
             lblAngle.AutoSize = true;
             lblAngle.Location = new Point(12, 12);
             lblAngle.Name = "lblAngle";
-            lblAngle.Size = new Size(36, 15);
+            lblAngle.Size = new Size(44, 20);
             lblAngle.TabIndex = 0;
             lblAngle.Text = "Угол:";
             // 
@@ -82,7 +83,7 @@
             txtAngle.Location = new Point(56, 9);
             txtAngle.Name = "txtAngle";
             txtAngle.PlaceholderText = "deg";
-            txtAngle.Size = new Size(60, 23);
+            txtAngle.Size = new Size(60, 27);
             txtAngle.TabIndex = 1;
             // 
             // btnDraw
@@ -91,9 +92,9 @@
             btnDraw.Name = "btnDraw";
             btnDraw.Size = new Size(170, 30);
             btnDraw.TabIndex = 2;
-            btnDraw.Text = "Построить по умолчанию";
+            btnDraw.Text = "Построить";
             btnDraw.UseVisualStyleBackColor = true;
-            btnDraw.Click += btnDraw_Click;
+            btnDraw.Click += BtnDraw_Click;
             // 
             // btnRotate
             // 
@@ -103,7 +104,7 @@
             btnRotate.TabIndex = 3;
             btnRotate.Text = "Повернуть (относительно 0,0)";
             btnRotate.UseVisualStyleBackColor = true;
-            btnRotate.Click += btnRotate_Click;
+            btnRotate.Click += BtnRotate_Click;
             // 
             // btnClear
             // 
@@ -113,7 +114,7 @@
             btnClear.TabIndex = 4;
             btnClear.Text = "Очистить";
             btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += btnClear_Click;
+            btnClear.Click += BtnClear_Click;
             // 
             // Form1
             // 
@@ -121,7 +122,7 @@
             Controls.Add(pictureBoxCanvas);
             Controls.Add(panelControls);
             Name = "Form1";
-            Text = "Треугольник в мировой системе координат";
+            Text = "Бригада №3: Бояркин, Мишин, Толстоухов";
             ((System.ComponentModel.ISupportInitialize)pictureBoxCanvas).EndInit();
             panelControls.ResumeLayout(false);
             panelControls.PerformLayout();

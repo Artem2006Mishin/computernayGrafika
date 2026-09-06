@@ -17,10 +17,10 @@ namespace computernayGrafika
         }
 
         // Исходные мировые координаты (фикcированные по умолчанию)
-        private WorldPoint[] originalPoints = null;
+        private WorldPoint[]? originalPoints;
 
         // Текущие мировые координаты (после поворота)
-        private WorldPoint[] currentPoints = null;
+        private WorldPoint[]? currentPoints;
 
         // Список соединений (индексы 1-based в таблице пользователя)
         private (int a, int b)[] edges = new (int, int)[]
@@ -56,14 +56,24 @@ namespace computernayGrafika
             InitializeComponent();
 
             // Подписываем обработчики событий
-            pictureBoxCanvas.Paint += PictureBoxCanvas_Paint;
             pictureBoxCanvas.Resize += (s, e) => Redraw();
 
             // Значение угла по умолчанию
             txtAngle.Text = "0";
 
-            // Инициализируем новую фигуру (пользовательские координаты)
-            originalPoints = new[]
+            // Инициализируем новую фигуру
+            OriginalPointsInitialize();
+
+            // Копия для накопительных поворотов
+            currentPoints = new WorldPoint[originalPoints!.Length];
+            Array.Copy(originalPoints, currentPoints, originalPoints.Length);
+
+            Redraw();
+        }
+
+        public void OriginalPointsInitialize()
+        {
+            originalPoints ??= new[]
             {
                 new WorldPoint(4, 13),   //1
                 new WorldPoint(6, 8),    //2
@@ -87,46 +97,39 @@ namespace computernayGrafika
                 new WorldPoint(1, -7),   //20
                 new WorldPoint(0, -9)    //21
             };
-
-            // Копия для накопительных поворотов
-            currentPoints = new WorldPoint[originalPoints.Length];
-            Array.Copy(originalPoints, currentPoints, originalPoints.Length);
-
-            Redraw();
         }
 
-        // Преобразование мировой точки в экранную (PictureBox)
+        // Преобразование мировой точки в экранную
         private Point WorldToScreen(WorldPoint p)
         {
             // Центр PictureBox в пикселях
             int cx = pictureBoxCanvas.ClientSize.Width / 2;
             int cy = pictureBoxCanvas.ClientSize.Height / 2;
 
-            // Инвертируем Y, потому что в мировой системе Y вверх,
-            // а в экранной системе Windows Forms Y направлен вниз.
+            // 1 вопрос!
             int sx = cx + (int)Math.Round(p.X * scale);
             int sy = cy - (int)Math.Round(p.Y * scale);
 
             return new Point(sx, sy);
         }
 
-        // Полная перерисовка — просим PictureBox перерисовать содержимое
+        // Полная перерисовка
         private void Redraw()
         {
             pictureBoxCanvas.Invalidate();
         }
 
-        // Обработчик кнопки "Построить по умолчанию" — сброс фигуры к исходной
-        private void btnDraw_Click(object sender, EventArgs e)
+        // Обработчик кнопки "Построить" — сброс фигуры к исходной
+        private void BtnDraw_Click(object sender, EventArgs e)
         {
-            if (originalPoints == null) return;
-            currentPoints = new WorldPoint[originalPoints.Length];
+            OriginalPointsInitialize();
+            currentPoints = new WorldPoint[originalPoints!.Length];
             Array.Copy(originalPoints, currentPoints, originalPoints.Length);
             Redraw();
         }
 
         // Обработчик кнопки "Повернуть" — повороты накопительные (вращаем currentPoints)
-        private void btnRotate_Click(object sender, EventArgs e)
+        private void BtnRotate_Click(object sender, EventArgs e)
         {
             if (currentPoints == null)
             {
@@ -156,14 +159,14 @@ namespace computernayGrafika
         }
 
         // Обработчик кнопки "Очистить"
-        private void btnClear_Click(object sender, EventArgs e)
+        private void BtnClear_Click(object sender, EventArgs e)
         {
             originalPoints = null;
             currentPoints = null;
             Redraw();
         }
 
-        // Рисование системы координат и фигуры (точки + соединения)
+        // Рисование системы координат и фигуры
         private void PictureBoxCanvas_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -196,7 +199,7 @@ namespace computernayGrafika
                 }
             }
 
-            int margin = 20; // пикселей запаса от краёв
+            int margin = 10; // пикселей запаса от краёв
             double scaleX = (w / 2.0 - margin) / maxAbsX;
             double scaleY = (h / 2.0 - margin) / maxAbsY;
             scale = Math.Max(0.000001, Math.Min(scaleX, scaleY)); // защитный минимум
@@ -233,23 +236,18 @@ namespace computernayGrafika
                 }
 
                 // Draw vertices
-                using (var brush = new SolidBrush(Color.White))
-                using (var pen = new Pen(Color.Black, 1))
-                using (var f = new Font(this.Font.FontFamily, 9))
-                using (var b = new SolidBrush(Color.Black))
+                using var brush = new SolidBrush(Color.White);
+                using var pen = new Pen(Color.Black, 1);
+                using var f = new Font(this.Font.FontFamily, 9);
+                using var b = new SolidBrush(Color.Black);
+                
+                for (int i = 0; i < pts.Length; i++)
                 {
-                    // Note: keep labels as numbers
-#pragma warning disable CS0219
-                    int dummy = 0;
-#pragma warning restore CS0219
-                    for (int i = 0; i < pts.Length; i++)
-                    {
-                        var sp = WorldToScreen(pts[i]);
-                        int r = 4;
-                        g.FillEllipse(brush, sp.X - r, sp.Y - r, r * 2, r * 2);
-                        g.DrawEllipse(pen, sp.X - r, sp.Y - r, r * 2, r * 2);
-                        g.DrawString((i + 1).ToString(), f, b, sp.X + 6, sp.Y - 6);
-                    }
+                    var sp = WorldToScreen(pts[i]);
+                    int r = 4;
+                    g.FillEllipse(brush, sp.X - r, sp.Y - r, r * 2, r * 2);
+                    g.DrawEllipse(pen, sp.X - r, sp.Y - r, r * 2, r * 2);
+                    g.DrawString((i + 1).ToString(), f, b, sp.X + 6, sp.Y - 6);
                 }
             }
         }
