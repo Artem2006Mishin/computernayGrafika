@@ -193,10 +193,16 @@ namespace computernayGrafika
                 }
             }
 
-            int margin = 6; // smaller margin -> slightly larger scale
+            // Make margin proportional to control size so smaller windows get larger margin (more shrink)
+            int margin = Math.Max(10, Math.Min(w, h) / 8);
+
             double scaleX = (w / 2.0 - margin) / maxAbsX;
             double scaleY = (h / 2.0 - margin) / maxAbsY;
             scale = Math.Max(0.000001, Math.Min(scaleX, scaleY)); // protective minimum and fit
+
+            // Apply a small global shrink factor so the figure always has spare space in non-fullscreen.
+            const double shrinkFactor = 0.82;
+            scale *= shrinkFactor;
 
             int cx = w / 2;
             int cy = h / 2;
@@ -252,7 +258,7 @@ namespace computernayGrafika
             // Candidates include fine steps (0.1, 0.2, 0.5...) so integer world coords land on intersections.
             double[] candidates = { 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200 };
             // Prefer denser grid: target pixel step smaller -> more cells visible
-            double minPx = 18, maxPx = 60;
+            double minPx = 14, maxPx = 48; // slightly smaller cells for better visibility
             double targetPx = (minPx + maxPx) / 2.0;
 
             double bestStep = candidates[0];
