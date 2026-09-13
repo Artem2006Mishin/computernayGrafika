@@ -70,5 +70,24 @@
             }
             return points3D;
         }
+        /// <summary>
+        /// Извлекает две координатные строки (например, X и Y) из матрицы точек 3×N,
+        /// формируя плоскую матрицу 2×N. Используется после проекции, когда одна из
+        /// координат обнулена и для отрисовки нужны только оставшиеся две.
+        /// </summary>
+        /// <param name="points"> матрица точек (3×N) </param>
+        /// <param name="rowA"> индекс строки, которая станет первой (экранной X) </param>
+        /// <param name="rowB"> индекс строки, которая станет второй (экранной Y) </param>
+        public static double[,] ExtractPlane(double[,] points, int rowA, int rowB)
+        {
+            int cols = points.GetLength(1);
+            double[,] plane = new double[2, cols];
+            for (int i = 0; i < cols; i++)
+            {
+                plane[0, i] = points[rowA, i];
+                plane[1, i] = points[rowB, i];
+            }
+            return plane;
+        }
     }
 }

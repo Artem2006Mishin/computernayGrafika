@@ -269,6 +269,38 @@ namespace computernayGrafika
         private void BtnRotateZ_Click(object sender, EventArgs e) => RotateAxis(Axis.Z, txtAngleZ.Text);
 
         /// <summary>
+        /// Обработчик клика по кнопке "Проекция".
+        /// Строит три вида косоугольной проекции кабине (спереди, сверху, сбоку)
+        /// текущей фигуры и показывает их на отдельной форме.
+        /// </summary>
+        private void BtnProjection_Click(object sender, EventArgs e)
+        {
+            if (currentPoints == null)
+            {
+                MessageBox.Show("Сначала постройте фигуру.", "Инфо", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            const double alphaDeg = 45.0; // угол наклона оси глубины к горизонтали
+
+            var homogeneous = MatrixUtils.CreateMatrix(currentPoints);
+
+            var frontProjected = MatrixUtils.ToPoints(TransformUtils.CabinetProjection(homogeneous, CabinetView.Front, alphaDeg));
+            var topProjected = MatrixUtils.ToPoints(TransformUtils.CabinetProjection(homogeneous, CabinetView.Top, alphaDeg));
+            var sideProjected = MatrixUtils.ToPoints(TransformUtils.CabinetProjection(homogeneous, CabinetView.Side, alphaDeg));
+
+            // для каждого вида забираем только те две координаты, которые не обнулились
+            var frontPlane = MatrixUtils.ExtractPlane(frontProjected, 0, 1); // X, Y
+            var topPlane = MatrixUtils.ExtractPlane(topProjected, 0, 2);     // X, Z
+            var sidePlane = MatrixUtils.ExtractPlane(sideProjected, 1, 2);   // Y, Z
+
+            using (var projectionForm = new ProjectionForm(frontPlane, topPlane, sidePlane, edges3D))
+            {
+                projectionForm.ShowDialog(this);
+            }
+        }
+
+        /// <summary>
         /// Обработчик клика по кнопке "Очистить"
         /// </summary>
         private void BtnClear_Click(object sender, EventArgs e)

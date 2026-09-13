@@ -43,6 +43,7 @@
             BtnRotateZ = new Button();
             MoveButton = new Button();
             ScaleButton = new Button();
+            BtnProjection = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBoxCanvas).BeginInit();
             panelControls.SuspendLayout();
             SuspendLayout();
@@ -95,6 +96,7 @@
             panelControls.Controls.Add(BtnRotateZ);
             panelControls.Controls.Add(MoveButton);
             panelControls.Controls.Add(ScaleButton);
+            panelControls.Controls.Add(BtnProjection);
             panelControls.Controls.Add(btnDraw);
             panelControls.Controls.Add(btnClear);
             panelControls.Dock = DockStyle.Left;
@@ -221,6 +223,16 @@
             ScaleButton.UseVisualStyleBackColor = true;
             ScaleButton.Click += ScaleButton_Click;
             // 
+            // BtnProjection
+            // 
+            BtnProjection.Location = new Point(15, 282);
+            BtnProjection.Name = "BtnProjection";
+            BtnProjection.Size = new Size(170, 29);
+            BtnProjection.TabIndex = 14;
+            BtnProjection.Text = "Проекция";
+            BtnProjection.UseVisualStyleBackColor = true;
+            BtnProjection.Click += BtnProjection_Click;
+            // 
             // DrawingForm
             // 
             ClientSize = new Size(800, 450);
@@ -253,5 +265,6 @@
         private Button BtnRotateZ;
         private Button MoveButton;
         private Button ScaleButton;
+        private Button BtnProjection;
     }
 }
