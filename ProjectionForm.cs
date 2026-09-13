@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace computernayGrafika
+﻿namespace computernayGrafika
 {
     /// <summary>
     /// Форма для отображения трёх видов косоугольной проекции кабине
@@ -8,10 +6,10 @@ namespace computernayGrafika
     /// </summary>
     public partial class ProjectionForm : Form
     {
-        private readonly double[,] frontPlane; // 2×N: X, Y
-        private readonly double[,] topPlane;   // 2×N: X, Z
-        private readonly double[,] sidePlane;  // 2×N: Y, Z
-        private readonly (int a, int b)[] edges;
+        private readonly double[,] _frontPlane; // 2×N: X, Y
+        private readonly double[,] _topPlane;   // 2×N: X, Z
+        private readonly double[,] _sidePlane;  // 2×N: Y, Z
+        private readonly (int a, int b)[] _edges;
 
         /// <summary>
         /// Создаёт форму с тремя готовыми (уже спроецированными) плоскими наборами точек.
@@ -24,14 +22,14 @@ namespace computernayGrafika
         {
             InitializeComponent();
 
-            this.frontPlane = frontPlane;
-            this.topPlane = topPlane;
-            this.sidePlane = sidePlane;
-            this.edges = edges;
+            _frontPlane = frontPlane;
+            _topPlane = topPlane;
+            _sidePlane = sidePlane;
+            _edges = edges;
 
-            pictureBoxFront.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxFront, this.frontPlane);
-            pictureBoxTop.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxTop, this.topPlane);
-            pictureBoxSide.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxSide, this.sidePlane);
+            pictureBoxFront.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxFront, this._frontPlane);
+            pictureBoxTop.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxTop, this._topPlane);
+            pictureBoxSide.Paint += (s, e) => DrawPlane(e.Graphics, pictureBoxSide, this._sidePlane);
 
             pictureBoxFront.Resize += (s, e) => pictureBoxFront.Invalidate();
             pictureBoxTop.Resize += (s, e) => pictureBoxTop.Invalidate();
@@ -80,7 +78,7 @@ namespace computernayGrafika
 
             using (var edgePen = new Pen(Color.Blue, 1.5f))
             {
-                foreach (var edge in edges)
+                foreach (var edge in _edges)
                 {
                     int ia = edge.a - 1;
                     int ib = edge.b - 1;

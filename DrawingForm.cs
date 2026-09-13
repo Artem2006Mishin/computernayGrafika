@@ -294,10 +294,8 @@ namespace computernayGrafika
             var topPlane = MatrixUtils.ExtractPlane(topProjected, 0, 2);     // X, Z
             var sidePlane = MatrixUtils.ExtractPlane(sideProjected, 1, 2);   // Y, Z
 
-            using (var projectionForm = new ProjectionForm(frontPlane, topPlane, sidePlane, edges3D))
-            {
-                projectionForm.ShowDialog(this);
-            }
+            using var projectionForm = new ProjectionForm(frontPlane, topPlane, sidePlane, edges3D);
+            projectionForm.ShowDialog(this);
         }
 
         /// <summary>
@@ -419,23 +417,21 @@ namespace computernayGrafika
             int w = pictureBoxCanvas.ClientSize.Width;
             int h = pictureBoxCanvas.ClientSize.Height;
 
-            using (var thin = new Pen(Color.FromArgb(240, 240, 240)))
+            using var thin = new Pen(Color.FromArgb(240, 240, 240));
+            int maxKx = (int)Math.Ceiling((w / 2.0) / (bestStep * scale));
+            for (int k = -maxKx; k <= maxKx; k++)
             {
-                int maxKx = (int)Math.Ceiling((w / 2.0) / (bestStep * scale));
-                for (int k = -maxKx; k <= maxKx; k++)
-                {
-                    if (k == 0) continue;
-                    int sx = cx + (int)Math.Round(k * bestStep * scale);
-                    g.DrawLine(thin, sx, 0, sx, h);
-                }
+                if (k == 0) continue;
+                int sx = cx + (int)Math.Round(k * bestStep * scale);
+                g.DrawLine(thin, sx, 0, sx, h);
+            }
 
-                int maxKy = (int)Math.Ceiling((h / 2.0) / (bestStep * scale));
-                for (int k = -maxKy; k <= maxKy; k++)
-                {
-                    if (k == 0) continue;
-                    int sy = cy - (int)Math.Round(k * bestStep * scale);
-                    g.DrawLine(thin, 0, sy, w, sy);
-                }
+            int maxKy = (int)Math.Ceiling((h / 2.0) / (bestStep * scale));
+            for (int k = -maxKy; k <= maxKy; k++)
+            {
+                if (k == 0) continue;
+                int sy = cy - (int)Math.Round(k * bestStep * scale);
+                g.DrawLine(thin, 0, sy, w, sy);
             }
         }
 

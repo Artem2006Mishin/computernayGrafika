@@ -10,6 +10,7 @@
         /// <summary>
         /// Создаёт однородную матрицу 4×N из матрицы точек 3×N (X, Y, Z)
         /// путём добавления строки единиц.
+        /// <param name="points3D"> матрица точек (3×N) </param>
         /// </summary>
         public static double[,] CreateMatrix(double[,] points3D)
         {
