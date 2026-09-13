@@ -2,24 +2,28 @@
 {
     /// <summary>
     /// Вспомогательный класс для операций с матрицами.
+    /// Точки хранятся как 3×N (X, Y, Z), для преобразований используются
+    /// однородные матрицы 4×N (добавляется строка единиц).
     /// </summary>
     public static class MatrixUtils
     {
         /// <summary>
-        /// Создает матрицу 3×N из матрицы 2×N (X, Y) путем добавления строки единиц.
+        /// Создаёт однородную матрицу 4×N из матрицы точек 3×N (X, Y, Z)
+        /// путём добавления строки единиц.
         /// </summary>
-        public static double[,] CreateMatrix(double[,] points2D)
+        public static double[,] CreateMatrix(double[,] points3D)
         {
-            int rows = points2D.GetLength(0);
-            int cols = points2D.GetLength(1);
-            if (rows != 2)
-                throw new ArgumentException("Матрица должна иметь ровно 2 строки (X и Y)");
-            double[,] matrix = new double[3, cols];
+            int rows = points3D.GetLength(0);
+            int cols = points3D.GetLength(1);
+            if (rows != 3)
+                throw new ArgumentException("Матрица должна иметь ровно 3 строки (X, Y, Z)");
+            double[,] matrix = new double[4, cols];
             for (int i = 0; i < cols; i++)
             {
-                matrix[0, i] = points2D[0, i];
-                matrix[1, i] = points2D[1, i];
-                matrix[2, i] = 1.0;
+                matrix[0, i] = points3D[0, i];
+                matrix[1, i] = points3D[1, i];
+                matrix[2, i] = points3D[2, i];
+                matrix[3, i] = 1.0;
             }
             return matrix;
         }
@@ -49,21 +53,22 @@
         }
 
         /// <summary>
-        /// Преобразует матрицу точек 3×N обратно в матрицу 2×N (X, Y).
+        /// Преобразует однородную матрицу 4×N обратно в матрицу точек 3×N (X, Y, Z).
         /// </summary>
-        public static double[,] ToPoints(double[,] matrix3D)
+        public static double[,] ToPoints(double[,] matrix4D)
         {
-            int rows = matrix3D.GetLength(0);
-            int cols = matrix3D.GetLength(1);
-            if (rows != 3)
-                throw new ArgumentException("Матрица должна иметь ровно 3 строки (X, Y, 1)");
-            double[,] points2D = new double[2, cols];
+            int rows = matrix4D.GetLength(0);
+            int cols = matrix4D.GetLength(1);
+            if (rows != 4)
+                throw new ArgumentException("Матрица должна иметь ровно 4 строки (X, Y, Z, 1)");
+            double[,] points3D = new double[3, cols];
             for (int i = 0; i < cols; i++)
             {
-                points2D[0, i] = matrix3D[0, i];
-                points2D[1, i] = matrix3D[1, i];
+                points3D[0, i] = matrix4D[0, i];
+                points3D[1, i] = matrix4D[1, i];
+                points3D[2, i] = matrix4D[2, i];
             }
-            return points2D;
+            return points3D;
         }
     }
 }
